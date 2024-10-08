@@ -6,7 +6,7 @@ export default class Controller {
   constructor(board) {
     this.board = board;
     this.newsId = new Set();
-    this.url = "https://server-common-ahj.herokuapp.com/news/latest";
+    this.url = "https://ahj-12-back.onrender.com";
     // "http://localhost:8080/news/latest";
   }
 
