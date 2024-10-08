@@ -1,54 +1,61 @@
 const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
-  target: "web",
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    publicPath: "",
-    assetModuleFilename: 'assets/images/[name][ext]'
-  },
-  resolve: {
-    alias: {
-      images: path.resolve(__dirname, "src/img/"),
-    },
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
+	target: "web",
+	output: {
+		path: path.resolve(__dirname, "dist"),
+		publicPath: "",
+	},
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: {
+					loader: "babel-loader",
+				},
       },
-      {
-        test: /\.html$/,
-        use: [
-          {
-            loader: "html-loader",
+			{
+				test: /\.html$/,
+				use: [
+					{
+						loader: "html-loader",
           },
         ],
       },
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+			{
+				// это должно быт здесь, тк есть встроенный лоадер, способный обрабатывать такие файлы
+				test: /\.(?:ico|png|jpg|jpeg|gif)$/i,
+
+				type: "asset/resource",
       },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
+			{
+				test: /\.css$/,
+				use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+			{
+				test: /\.svg$/,
+				type: "asset/resource",
       },
     ],
-  },
-  plugins: [
+	},
+	plugins: [
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html",
-    }),
+			template: "./src/index.html",
+			filename: "./index.html",
+		}),
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css",
-    }),
+			filename: "[name].css",
+			chunkFilename: "[id].css",
+		}),
+	      new WorkboxPlugin.GenerateSW({
+			clientsClaim: true,
+			skipWaiting: true,
+			cleanupOutdatedCaches: true,
+		}),
   ],
+
 };
